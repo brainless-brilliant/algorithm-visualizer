@@ -24,6 +24,59 @@ const customStyles = `
     text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
     line-height: 1;
   }
+
+   .bg-grid {
+    background-image: 
+      linear-gradient(to right, rgba(156, 163, 175, 0.2) 1px, transparent 1px),
+      linear-gradient(to top, rgba(156, 163, 175, 0.2) 1px, transparent 1px);
+    background-size: 40px 20px;
+    background-position: 0 0, 0 0;
+  }
+  
+  .bg-grid::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+      linear-gradient(to right, rgba(156, 163, 175, 0.4) 1px, transparent 1px),
+      linear-gradient(to top, rgba(156, 163, 175, 0.4) 1px, transparent 1px);
+    background-size: 200px 100px;
+    pointer-events: none;
+  }
+  
+  /* Value labels on Y-axis */
+  .chart-container {
+    position: relative;
+  }
+  
+  .y-axis-labels {
+    position: absolute;
+    left: -30px;
+    top: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: space-between;
+    font-size: 10px;
+    color: #6b7280;
+  }
+  
+  @media (max-width: 640px) {
+    .algorithm-bar span {
+      font-size: 8px;
+    }
+    
+    .bg-grid {
+      background-size: 20px 15px;
+    }
+    
+    .bg-grid::before {
+      background-size: 100px 75px;
+    }
+  }
   
   @media (max-width: 640px) {
     .algorithm-bar span {
@@ -181,7 +234,7 @@ const BubbleSort = ({ array, onArrayChange, speed }) => {
             </button>
           </div>
 
-          <div className="flex items-end gap-1 h-80 border-b border-gray-300 p-4 relative">
+          <div className="flex items-end gap-1 h-80 border-b border-gray-300 p-4 bg-grid relative">
             {currentArray.map((value, index) => (
               <div
                 key={index}
@@ -402,7 +455,7 @@ const InsertionSort = ({ array, onArrayChange, speed }) => {
             </button>
           </div>
 
-          <div className="flex items-end gap-1 h-80 border-b border-gray-300 p-4">
+          <div className="flex items-end gap-1 h-80 border-b border-gray-300 p-4 relative bg-grid">
             {currentArray.map((value, index) => (
               <div
                 key={index}
@@ -645,7 +698,7 @@ const SelectionSort = ({ array, onArrayChange, speed }) => {
             </button>
           </div>
 
-          <div className="flex items-end gap-1 h-80 border-b border-gray-300 p-4">
+          <div className="flex items-end gap-1 h-80 border-b border-gray-300 p-4 bg-grid relative">
             {currentArray.map((value, index) => (
               <div
                 key={index}
@@ -827,7 +880,7 @@ const LinearSearch = ({ array, speed }) => {
             </div>
           )}
 
-          <div className="flex items-end gap-1 h-80 border-b border-gray-300 p-4">
+          <div className="flex items-end gap-1 h-80 border-b border-gray-300 p-4 bg-grid relative">
             {currentArray.map((value, index) => (
               <div
                 key={index}
@@ -1055,7 +1108,7 @@ const BinarySearch = ({ array, speed }) => {
             </div>
           )}
 
-          <div className="flex items-end gap-1 h-80 border-b border-gray-300 p-4">
+          <div className="flex items-end gap-1 h-80 border-b border-gray-300 p-4 bg-grid relative">
             {sortedArray.map((value, index) => (
               <div
                 key={index}
@@ -1269,7 +1322,7 @@ const MergeSort = ({ array, onArrayChange, speed }) => {
             </button>
           </div>
 
-          <div className="flex items-end gap-1 h-80 border-b border-gray-300 p-4">
+          <div className="flex items-end gap-1 h-80 border-b border-gray-300 p-4 bg-grid relative">
             {currentArray.map((value, index) => (
               <div
                 key={index}
@@ -1339,10 +1392,14 @@ const MergeSort = ({ array, onArrayChange, speed }) => {
 
 // Main App Component
 const AlgorithmVisualizer = () => {
-  const [array, setArray] = useState(generateRandomArray(20));
+  const [array, setArray] = useState(generateRandomArray(5));
   const [speed, setSpeed] = useState(500);
-  const [arraySize, setArraySize] = useState(20);
+  const [arraySize, setArraySize] = useState(5);
   const [activeTab, setActiveTab] = useState("bubble");
+
+  useEffect(() => {
+    setArray(generateRandomArray(arraySize));
+  }, [activeTab]);
 
   const generateNewArray = () => {
     setArray(generateRandomArray(arraySize));
@@ -1372,16 +1429,27 @@ const AlgorithmVisualizer = () => {
             <div className="flex gap-4 items-center">
               <div className="flex items-center gap-2">
                 <Settings size={20} />
-                <label className="text-sm font-medium">Array Size:</label>
-                <input
-                  type="range"
-                  min="10"
-                  max="50"
-                  value={arraySize}
-                  onChange={(e) => setArraySize(parseInt(e.target.value))}
-                  className="w-24"
-                />
-                <span className="text-sm text-gray-600">{arraySize}</span>
+                <div className="flex items-center gap-2">
+                  <label className="text-sm font-medium">Array Size:</label>
+                  <input
+                    type="range"
+                    min="5"
+                    max="50"
+                    value={arraySize}
+                    onChange={(e) => setArraySize(parseInt(e.target.value))}
+                    className="w-24"
+                  />
+                  <input
+                    type="number"
+                    min="5"
+                    max="50"
+                    value={arraySize}
+                    onChange={(e) =>
+                      setArraySize(parseInt(e.target.value) || 5)
+                    }
+                    className="w-16 px-2 py-1 border rounded text-sm"
+                  />
+                </div>
               </div>
 
               <div className="flex items-center gap-2">
@@ -1394,7 +1462,16 @@ const AlgorithmVisualizer = () => {
                   onChange={(e) => setSpeed(parseInt(e.target.value))}
                   className="w-24"
                 />
-                <span className="text-sm text-gray-600">{speed}ms</span>
+                <input
+                  type="number"
+                  min="100"
+                  max="1000"
+                  step="50"
+                  value={speed}
+                  onChange={(e) => setSpeed(parseInt(e.target.value) || 100)}
+                  className="w-20 px-2 py-1 border rounded text-sm"
+                />
+                <span className="text-sm text-gray-600">ms</span>
               </div>
             </div>
 
